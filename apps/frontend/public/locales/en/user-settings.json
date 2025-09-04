@@ -1,0 +1,41 @@
+{
+  "inputs": {
+    "userEmail": "User Email:",
+    "userFirstName": "User First Name:",
+    "userLastName": "User Last Name:",
+    "userPhoneNumber": "Phone Number:"
+  },
+  "buttons": {
+    "saveChanges": "Save changes",
+    "changePassword": "Change password",
+    "logout": "Logout",
+    "deleteAccount": "Delete account"
+  },
+  "sections": {
+    "chooseCountry": "Please choose country",
+    "chooseRegion": "Please choose region",
+    "chooseCity": "Please choose city"
+  },
+  "modals": {
+    "deleteAccount": {
+      "labels": {
+        "password": "Password",
+        "repeatPassword": "Repeat Password"
+      },
+      "buttons": {
+        "confirm": "Confirm",
+        "cancel": "Cancel"
+      }
+    },
+    "changePassword": {
+      "labels": {
+        "oldPassword": "Old Password",
+        "newPassword": "New Password"
+      },
+      "buttons": {
+        "confirm": "Confirm",
+        "cancel": "Cancel"
+      }
+    }
+  }
+}

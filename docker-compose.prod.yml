@@ -1,0 +1,114 @@
+version: "3.8"
+
+services:
+  backend:
+    image: kentypa/backend
+    build:
+      context: ./apps/backend
+      dockerfile: Dockerfile.prod
+    volumes:
+      - backend_uploads:/app/uploads
+    env_file:
+      - ./apps/backend/.env
+    expose:
+      - "3000"
+    networks:
+      - private
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+
+  frontend:
+    image: kentypa/frontend
+    build:
+      context: ./apps/frontend
+      dockerfile: Dockerfile.prod
+    env_file:
+      - ./apps/frontend/.env
+    container_name: online-store-frontend
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      - private
+    depends_on:
+      - backend
+
+  db:
+    image: postgres:15-alpine
+    env_file:
+      - .env
+    volumes:
+      - db_data:/var/lib/postgresql/data
+      - ./db-init-scripts:/docker-entrypoint-initdb.d
+    networks:
+      - private
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    networks:
+      - private
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  teamcity-server:
+    image: jetbrains/teamcity-server:latest
+    container_name: teamcity-server
+    ports:
+      - "8111:8111"
+    volumes:
+      - teamcity_data:/data/teamcity_server/datadir
+      - teamcity_logs:/opt/teamcity/logs
+    restart: unless-stopped
+    env_file:
+      - .env
+    networks:
+      - private
+    environment:
+      TEAMCITY_DB_TYPE: postgresql
+      TEAMCITY_DB_HOST: db
+      TEAMCITY_DB_PORT: 5432
+      TEAMCITY_DB_NAME: teamcity_db
+      TEAMCITY_DB_USER: ${POSTGRES_USER}
+      TEAMCITY_DB_PASSWORD: ${POSTGRES_PASSWORD}
+    depends_on:
+      db:
+        condition: service_healthy
+
+  teamcity-agent:
+    image: jetbrains/teamcity-agent:2025.07.1-linux-sudo
+    container_name: teamcity-agent-prod
+    privileged: true
+    user: root
+    networks:
+      - private
+    depends_on:
+      - teamcity-server
+    environment:
+      - SERVER_URL=http://teamcity-server:8111
+      - DOCKER_IN_DOCKER=start
+    volumes:
+      - ./agent/conf:/data/teamcity_agent/conf
+
+volumes:
+  db_data:
+  backend_uploads:
+  teamcity_data:
+  teamcity_logs:
+
+networks:
+  private:
+    driver: bridge

@@ -1,0 +1,30 @@
+{
+  "buttons": {
+    "remove": "Remove",
+    "checkout": "Checkout"
+  },
+  "labels": {
+    "each": "Each",
+    "quantity": "Quantity",
+    "total": "Total",
+    "totalPrice": "Total price",
+    "checkoutForm": "Checkout form"
+  },
+  "form": {
+    "inputs": {
+      "name": "Name",
+      "email": "Email",
+      "shippingAddress": "Shipping Address",
+      "variants": {
+        "standartDelivery": "Standart Delivery",
+        "expressDelivery": "Express Delivery"
+      },
+      "cardNumber": "Card Number",
+      "cardYear": "MM/YY",
+      "cvc": "CVC"
+    }
+  },
+  "messages": {
+    "emptyCart": "User cart is empty"
+  }
+}

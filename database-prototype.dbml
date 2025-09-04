@@ -1,0 +1,281 @@
+Table country {
+  code varchar(2) [pk]
+}
+
+Table country_translation {
+  country_code varchar(2) [ref: > country.code, pk]
+  lang_code varchar(2) [ref: > language.code, pk]
+  name varchar(128) [not null]
+}
+
+Table region {
+  id serial [pk]
+  country_code varchar(2) [ref: > country.code, not null]
+  code varchar(16) [unique, not null]
+}
+
+Table region_translation {
+  region_id integer [ref: > region.id, pk]
+  lang_code varchar(2) [ref: > language.code, pk]
+  name varchar(128) [not null]
+}
+
+Table city {
+  id serial [pk]
+  region_id integer [ref: > region.id, not null]
+}
+
+Table city_translation {
+  city_id integer [ref: > city.id, pk]
+  lang_code varchar(2) [ref: > language.code, pk]
+  name varchar(128) [not null]
+}
+
+Table language {
+  code varchar(2) [pk]
+  name varchar(64)
+}
+
+Table user_role {
+  code varchar(32) [pk]
+  name varchar(64) [unique]
+}
+
+Table order_status {
+  code varchar(32) [pk]
+  name varchar(64) [unique]
+}
+
+Table payment_status {
+  code varchar(32) [pk]
+  name varchar(64) [unique]
+}
+
+Table shipping_methods {
+  code varchar(32) [pk]
+  name varchar(64) [unique]
+}
+
+Table payment_methods {
+  code varchar(32) [pk]
+  name varchar(64) [unique]
+}
+
+Table period_type_enum {
+  code varchar(32) [pk]
+  name varchar(64) [unique]
+}
+
+Table enum_translation {
+  type varchar(32) [pk]
+  code varchar(32) [pk]
+  lang varchar(2) [ref: > language.code, pk]
+  name varchar(64) [not null]
+}
+
+Table user {
+  id serial [pk]
+  email varchar(320) [unique, not null]
+  password varchar(512) [not null]
+  first_name varchar(64)
+  last_name varchar(64)
+  phone varchar(20) [unique]
+  avatar_url varchar(256)
+  language_code varchar(2) [ref: > language.code, default: 'en']
+  country_code varchar(2) [ref: > country.code, default: 'GB']
+  region_id integer [ref: > region.id, null]
+  city_id integer [ref: > city.id, null]
+  created_at timestamp [default: `now()`]
+  updated_at timestamp [default: `now()`]
+  deleted_at timestamp
+  indexes {
+    email [unique, name: 'idx_user_email']
+    created_at [name: 'idx_user_created']
+  }
+}
+
+Table user_refresh_token {
+  user_id integer [ref: > user.id]
+  device_id uuid
+  refresh_token varchar(512)
+  expires_at timestamp
+  created_at timestamp [default: `now()`]
+  updated_at timestamp [default: `now()`]
+  indexes { (user_id, device_id) [pk] }
+}
+
+Table password_reset_token {
+  id serial [pk]
+  user_id integer [ref: > user.id]
+  token varchar(512) [pk]
+  expires_at timestamp
+  created_at timestamp [default: `now()`]
+}
+
+Table cart_item {
+  user_id integer [ref: > user.id]
+  product_id integer [ref: > product.id]
+  quantity integer [default: 1]
+  created_at timestamp [default: `now()`]
+  indexes { (user_id, product_id) [pk] }
+}
+
+Table shipping_address {
+  id serial [pk]
+  user_id integer [ref: > user.id, null]
+  recipient_name varchar(128) [not null]
+  address_line1 varchar(256) [not null]
+  address_line2 varchar(256)
+  postal_code varchar(20) [not null]
+  country_code varchar(2) [ref: > country.code, not null]
+  region_id integer [ref: > region.id, null]
+  city_id integer [ref: > city.id, not null]
+  phone varchar(20) [not null]
+  is_default boolean [default: false]
+  created_at timestamp [default: `now()`]
+  updated_at timestamp [default: `now()`]
+  shipping_address_id integer [ref: > shipping_address.id]
+  indexes {
+    (user_id, is_default)
+  }
+}
+
+Table order {
+  id serial [pk]
+  user_id integer [ref: > user.id, null]
+  shipping_address_id integer [ref: > shipping_address.id]
+  status_code varchar(32) [ref: > order_status.code, default: 'PENDING']
+  shipping_method_code varchar(32) [ref: > shipping_methods.code]
+  payment_method_code varchar(32) [ref: > payment_methods.code]
+  payment_status_code varchar(32) [ref: > payment_status.code, default: 'PENDING']
+  total_price integer
+  created_at timestamp [default: `now()`]
+  updated_at timestamp [default: `now()`]
+  indexes {
+    (user_id, status_code, created_at) [name: 'idx_order_user_status']
+    created_at [name: 'idx_order_created']
+  }
+}
+
+Table order_history {
+  id serial [pk]
+  order_id integer [ref: > order.id, not null]
+  user_id integer [ref: > user.id, not null]
+  status_code varchar(32) [ref: > order_status.code, not null]
+  changed_at timestamp [default: `now()`]
+  changed_by integer [ref: > user.id, null]
+  indexes {
+    order_id
+    user_id
+  }
+}
+
+Table order_item {
+  order_id integer [ref: > order.id]
+  product_id integer [ref: > product.id]
+  quantity integer
+  unit_price integer
+  indexes { (order_id, product_id) [pk] }
+}
+
+Table payment_transaction {
+  id serial [pk]
+  order_id integer [ref: > order.id]
+  external_transaction_id varchar(256) [unique]
+  payment_provider varchar(32)
+  amount integer
+  currency varchar(3) [default: 'USD']
+  status_code varchar(32) [ref: > payment_status.code]
+  gateway_metadata jsonb
+  created_at timestamp [default: `now()`]
+  updated_at timestamp [default: `now()`]
+  indexes {
+    order_id
+    created_at
+  }
+}
+
+Table product {
+  id serial [pk]
+  price integer
+  currency varchar(3) [default: 'USD']
+  stock integer [default: 0]
+  main_image_url varchar(256)
+  other_image_urls text[]
+  category_id integer [ref: > category.id]
+  created_at timestamp [default: `now()`]
+  updated_at timestamp [default: `now()`]
+  deleted_at timestamp
+  indexes {
+    category_id [name: 'idx_product_category']
+    created_at [name: 'idx_product_created']
+    price [name: 'idx_product_price']
+  }
+}
+
+Table product_translation {
+  product_id integer [ref: > product.id]
+  lang varchar(2) [ref: > language.code]
+  title varchar(128)
+  description text
+  indexes {
+    (product_id, lang) [pk]
+  }
+}
+
+Table category {
+  id serial [pk]
+  parent_id integer [ref: > category.id, null]
+  image_url varchar(256)
+  deleted_at timestamp
+}
+
+Table category_translation {
+  category_id integer [ref: > category.id]
+  lang varchar(2) [ref: > language.code]
+  name varchar(64)
+  indexes { (category_id, lang) [pk] }
+}
+
+Table review {
+  id serial [pk]
+  user_id integer [ref: > user.id]
+  product_id integer [ref: > product.id]
+  rating integer [note: 'CHECK (rating >= 1 AND rating <= 5)']
+  comment text
+  created_at timestamp [default: `now()`]
+  updated_at timestamp [default: ``]
+  indexes {
+    (user_id, product_id) [unique]
+    (product_id, rating) [name: 'idx_review_product_rating']
+    created_at [name: 'idx_review_created']
+  }
+}
+
+Table product_stats {
+  product_id integer [ref: > product.id, pk]
+  region_id integer [ref: > region.id, pk]
+  total_sold integer [default: 0]
+  period_type_code varchar(32) [ref: > period_type_enum.code, default: 'ALL_TIME']
+  period_date date
+  indexes {
+    period_date [name: 'idx_stats_period']
+  }
+}
+
+Table audit_log {
+  id serial [pk]
+  entity_type varchar(32) [not null]
+  entity_id integer [not null]
+  action varchar(32) [not null]
+  field_name varchar(64) [not null]
+  old_value text
+  new_value text
+  changed_at timestamp [default: `now()`]
+  changed_by integer [ref: > user.id, null]
+  indexes {
+    (entity_type, entity_id) [name: 'idx_audit_entity']
+    changed_at [name: 'idx_audit_changed']
+    changed_by [name: 'idx_audit_user']
+  }
+}

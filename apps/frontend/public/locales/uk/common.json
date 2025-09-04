@@ -1,0 +1,50 @@
+{
+  "header": {
+    "catalog": "Каталог",
+    "search": "Пошук"
+  },
+  "footer": {
+    "column_1": {
+      "section": "Kent Store",
+      "aboutUs": "Про нас",
+      "contacts": "Контакти",
+      "allBrands": "Усі бренди",
+      "onMap": "На мапі"
+    },
+    "column_2": {
+      "section": "Користувачам",
+      "delivery": "Доставка",
+      "shops": "Магазини",
+      "serviceAndWarranty": "Сервіс і гарантія",
+      "serviceCenters": "Сервісні центри"
+    },
+    "column_3": {
+      "section": "Бізнесу",
+      "forBulkClients": "Оптовим клієнтам",
+      "forCorporateClients": "Корпоративним клієнтам",
+      "serviceLogin": "Вхід до сервісу"
+    },
+    "column_4": {
+      "section": "Переваги",
+      "loyaltyProgram": "Програма лояльності",
+      "promotions": "Акції",
+      "giftCertificates": "Подарункові сертифікати",
+      "paymentByInstallments": "Оплата частинами",
+      "discountedProducts": "Товари зі знижкою"
+    },
+    "column_5": {
+      "section": "Зворотній зв'язок",
+      "supportService": "Служба підтримки",
+      "phoneNumber": "0 800 216 800",
+      "callCenterHourse": "Години роботи кол-центру",
+      "weekdays": "Пн-Пт: з 9:00 до 20:00",
+      "weekends": "Сб-Нд: з 10:00 до 19:00"
+    }
+  },
+  "profileNavigation": {
+    "section": "Профіль",
+    "orders": "Замовлення",
+    "userSettings": "Налаштування",
+    "userCart": "Кошик"
+  }
+}

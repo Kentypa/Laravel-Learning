@@ -1,0 +1,15 @@
+{
+  "welcomeMessage": "Ласкаво просимо до Kent Store",
+  "signInLabel": "Увійти",
+  "email": "Електронна пошта",
+  "password": "Пароль",
+  "forgetPassword": "Забули пароль?",
+  "button": {
+    "signIn": "Увійти"
+  },
+  "link": {
+    "message": "Ще немає акаунта?",
+    "signUp": "Зареєструватись",
+    "recovery": "Хочете відновити акаунт?"
+  }
+}
