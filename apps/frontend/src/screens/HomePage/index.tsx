@@ -10,7 +10,6 @@ export const HomePage: FC = () => {
   return (
     <MainContentWrapper>
       {isSuccess && <p>Message: {data.message}</p>}
-      {data?.message}
     </MainContentWrapper>
   );
 };
