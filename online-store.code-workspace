@@ -16,7 +16,6 @@
   "extensions": {
     "recommendations": [
       "aaron-bond.better-comments",
-      "BeardedBear.beardedtheme",
       "bocovo.dbml-erd-visualizer",
       "BracketPairColorDLW.bracket-pair-color-dlw",
       "bradlc.vscode-tailwindcss",
