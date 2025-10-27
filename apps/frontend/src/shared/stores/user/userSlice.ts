@@ -1,19 +1,13 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { UserData } from "@shared-types/auth/user-data";
 import { initialState } from "./initialState";
-import { BACKEND_URL } from "@config/config";
-
-const formatAvatarUrl = (url?: string) => (url ? `${BACKEND_URL}/${url}` : "");
 
 export const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
     changeByData: (state, action: PayloadAction<UserData>) => {
-      Object.assign(state, {
-        ...action.payload,
-        avatarUrl: formatAvatarUrl(action.payload.avatarUrl),
-      });
+      Object.assign(state, action.payload);
     },
     changeIsAuthenticated: (state, action: PayloadAction<boolean>) => {
       state.isAuthenticated = action.payload;

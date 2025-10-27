@@ -1,3 +1,4 @@
+import { PagesEndponts } from "@enums/pagesEndpoints";
 import { useAppSelector } from "@hooks/core/redux";
 import { LoadingWheel } from "@overlays/LoadingWheel";
 import { userSelector } from "@selectors/userSelector";
@@ -12,7 +13,7 @@ export const ProtectedRoute: FC = () => {
   }
 
   if (!isAuthenticated) {
-    return <Navigate to="/sign-in" replace />;
+    return <Navigate to={PagesEndponts.LOGIN} replace />;
   }
 
   return <Outlet />;

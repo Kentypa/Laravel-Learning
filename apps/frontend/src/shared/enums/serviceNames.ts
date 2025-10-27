@@ -1,5 +1,5 @@
 export enum ServiceNames {
-  AUTH = "auth",
+  AUTH = "/api/auth",
   USER = "user",
   GEO = "geo",
   CATEGORY = "category",
