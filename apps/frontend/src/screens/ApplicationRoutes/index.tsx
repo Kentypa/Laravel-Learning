@@ -6,6 +6,7 @@ import { UserPage } from "@screens/UserPage";
 import { useInitializationUser } from "@hooks/auth/use-user-initialization";
 import { LoginPage } from "@screens/AuthPages/LoginPage";
 import { RegisterPage } from "@screens/AuthPages/RegisterPage";
+import { BookPage } from "@screens/BookPage";
 
 export const ApplicationRoutes: FC = () => {
   useInitializationUser();
@@ -16,6 +17,8 @@ export const ApplicationRoutes: FC = () => {
       <Route element={<ProtectedRoute />}>
         <Route path="/user" element={<UserPage />} />
       </Route>
+      <Route path="book/:bookId" element={<BookPage />} />
+      <Route path="author/:authorId" element={<BookPage />} />
       <Route path="auth">
         <Route path="login" element={<LoginPage />} />
         <Route path="register" element={<RegisterPage />} />

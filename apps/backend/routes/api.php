@@ -10,6 +10,8 @@ use App\Http\Controllers\Auth\NewPasswordController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\VerifyEmailController;
+use App\Http\Controllers\Api\AuthorController;
+use App\Http\Controllers\Api\BookController;
 
 Route::prefix('auth')->middleware(['web', 'guest'])->group(function () {
     Route::post('/login', [AuthenticatedSessionController::class, 'store']);
@@ -32,3 +34,7 @@ Route::prefix('auth')->middleware(['web','auth:sanctum'])->group(function () {
         ->middleware(['signed', 'throttle:6,1'])
         ->name('verification.verify');
 });
+
+
+Route::apiResource('authors', AuthorController::class);
+Route::apiResource('books', BookController::class);

@@ -3,4 +3,6 @@ export enum PagesEndponts {
   USER = "/user",
   LOGIN = "/auth/login",
   REGISTER = "/auth/register",
+  BOOKS = "/books",
+  BOOK = "/book",
 }

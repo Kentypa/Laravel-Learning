@@ -8,4 +8,5 @@ export enum Queries {
   SEARCH_PRODUCTS = "searchProducts",
   REVIEWS = "review",
   CART = "cart",
+  BOOKS = "books",
 }

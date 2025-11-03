@@ -6,4 +6,5 @@ export enum ServiceNames {
   PRODUCTS = "products",
   REVIEWS = "review",
   CART = "cart",
+  BOOKS = "/api/books",
 }
