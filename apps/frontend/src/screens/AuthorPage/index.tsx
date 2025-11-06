@@ -2,33 +2,33 @@ import { FC } from "react";
 import { MainContentWrapper } from "@wrappers/MainContentWrapper";
 import "swiper/css";
 import { useQuery } from "@tanstack/react-query";
-import { bookService } from "@services/book-service";
 import { ServiceNames } from "@enums/serviceNames";
 import { Queries } from "@enums/queriesKeys";
 import { useNavigate, useParams } from "react-router";
-import { Book } from "@shared-types/library/book";
 import { Button } from "@ui/Button";
 import { PagesEndponts } from "@enums/pagesEndpoints";
+import { authorService } from "@services/author-service";
+import { AuthorResponse } from "@shared-types/library/author-request";
 
-export const BookPage: FC = () => {
-  const { getBook } = bookService(ServiceNames.BOOKS);
+export const AuthorPage: FC = () => {
+  const { getAuthor } = authorService(ServiceNames.AUTHOR);
 
   const params = useParams();
-  const bookId = Number(params.bookId);
+  const authorId = Number(params.authorId);
 
   const {
-    data: book,
+    data: authorInfo,
     isSuccess,
     isLoading,
-  } = useQuery<Book>({
-    queryKey: [Queries.BOOKS, bookId],
-    queryFn: () => getBook(bookId),
+  } = useQuery<AuthorResponse>({
+    queryKey: [Queries.AUTHOR, authorId],
+    queryFn: () => getAuthor(authorId),
   });
 
   const navigate = useNavigate();
 
-  const visitAuthorPage = (authorId: number) => {
-    navigate(`${PagesEndponts.AUTHOR}/${authorId}`);
+  const visitAuthorBooks = (bookId: number) => {
+    navigate(`${PagesEndponts.BOOK}/${bookId}`);
   };
 
   return (
@@ -36,16 +36,16 @@ export const BookPage: FC = () => {
       {isLoading && <div>Content is loading</div>}
       {isSuccess && (
         <div className="mx-20 my-10 flex flex-col gap-5">
-          <h2>Book Title: {book.title}</h2>
+          <h2>Author books: {authorInfo.name}</h2>
           <ul>
-            {book.authors.map((author) => (
-              <li key={author.id}>
+            {authorInfo.books.map((book) => (
+              <li key={book.id}>
                 <Button
                   handleClick={() => {
-                    visitAuthorPage(author.id);
+                    visitAuthorBooks(book.id);
                   }}
                 >
-                  Author Name: {author.name}
+                  Book Title: {book.title}
                 </Button>
               </li>
             ))}

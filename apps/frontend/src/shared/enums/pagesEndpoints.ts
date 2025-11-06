@@ -5,4 +5,5 @@ export enum PagesEndponts {
   REGISTER = "/auth/register",
   BOOKS = "/books",
   BOOK = "/book",
+  AUTHOR = "/author",
 }
