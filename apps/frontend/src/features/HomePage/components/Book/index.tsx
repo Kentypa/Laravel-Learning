@@ -1,15 +1,42 @@
-import { Book } from "@shared-types/library/book";
-import { FC } from "react";
-import NotFoundIcon from "@icons/not-found.svg?react";
-import { Button } from "@ui/Button";
+import { Book as BookType } from "@shared-types/library/book";
+import {
+  createContext,
+  useContext,
+  FC,
+  HTMLAttributes,
+  ReactNode,
+} from "react";
 import { useNavigate } from "react-router";
 import { PagesEndponts } from "@enums/pagesEndpoints";
+import { Button } from "@ui/Button";
+import NotFoundIcon from "@icons/not-found.svg?react";
 
-type BookCartProps = {
-  book: Book;
+type BookContextType = BookType | null;
+const BookContext = createContext<BookContextType>(null);
+
+const useBook = () => {
+  const context = useContext(BookContext);
+  if (!context) {
+    throw new Error("Components book should be inside <Book>");
+  }
+  return context;
 };
 
-export const BookCart: FC<BookCartProps> = ({ book }) => {
+const Image: FC<HTMLAttributes<SVGSVGElement>> = (props) => {
+  return <NotFoundIcon className="fill-primary size-auto" {...props} />;
+};
+
+const Title: FC<HTMLAttributes<HTMLHeadingElement>> = (props) => {
+  const book = useBook();
+  return (
+    <h3 className="max-w-80 truncate mb-5" {...props}>
+      {props.children || book.title}
+    </h3>
+  );
+};
+
+const ReadButton: FC<HTMLAttributes<HTMLButtonElement>> = (props) => {
+  const book = useBook();
   const navigate = useNavigate();
 
   const handleClick = () => {
@@ -17,18 +44,40 @@ export const BookCart: FC<BookCartProps> = ({ book }) => {
   };
 
   return (
-    <li
-      className="flex flex-col p-3 border-2 rounded-2xl border-primary"
-      key={book.id}
+    <Button
+      className="bg-green-500 text-white rounded-md self-end px-2 py-1"
+      handleClick={handleClick}
+      {...props}
     >
-      <NotFoundIcon className="fill-primary size-auto" />
-      <h3 className="max-w-80 truncate mb-5">{book.title}</h3>
-      <Button
-        className="bg-green-500 text-white rounded-md self-end px-2 py-1"
-        handleClick={handleClick}
-      >
-        <p>Read</p>
-      </Button>
-    </li>
+      {props.children || <p>Read</p>}
+    </Button>
   );
 };
+
+type BookProps = {
+  book: BookType;
+  children: ReactNode;
+} & Omit<HTMLAttributes<HTMLLIElement>, "children">;
+
+type BookCompoundComponent = FC<BookProps> & {
+  Image: FC<HTMLAttributes<SVGSVGElement>>;
+  Title: FC<HTMLAttributes<HTMLHeadingElement>>;
+  ReadButton: FC<HTMLAttributes<HTMLButtonElement>>;
+};
+
+export const Book: BookCompoundComponent = ({ book, children, ...liProps }) => {
+  return (
+    <BookContext.Provider value={book}>
+      <li
+        className="flex flex-col p-3 border-2 rounded-2xl border-primary"
+        {...liProps}
+      >
+        {children}
+      </li>
+    </BookContext.Provider>
+  );
+};
+
+Book.Image = Image;
+Book.Title = Title;
+Book.ReadButton = ReadButton;
